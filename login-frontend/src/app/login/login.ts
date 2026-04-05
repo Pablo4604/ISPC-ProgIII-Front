@@ -15,22 +15,35 @@ export class Login {
   private http = inject(HttpClient);
   private router = inject(Router);
 
+  // Propiedad para mostrar errores en el template
+  errorMessage: string = '';
+  // Propiedad para el checkbox "Recordarme"
+  rememberMe: boolean = false;
+
   loginForm: FormGroup = this.fb.group({
     username: ['', Validators.required],
-    password: ['', Validators.required]
+    // Validators.minLength(8) agrega validación de longitud mínima
+    password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
   onSubmit() {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
-      this.http.post('http://localhost:8000/api/login/', { username, password }).subscribe({
+      this.http.post<any>('http://localhost:8000/api/login/', { username, password }).subscribe({
         next: (response) => {
-          console.log('Login successful', response);
+          // Si "Recordarme" esta activado, guardamos el token en localStorage, de lo contrario en sessionStorage
+          if (this.rememberMe) {
+            localStorage.setItem('access_token', response.access);
+            localStorage.setItem('user', JSON.stringify(response.user));
+          } else {
+            sessionStorage.setItem('access_token', response.access);
+            sessionStorage.setItem('user', JSON.stringify(response.user));
+          }
           this.router.navigate(['/home']);
         },
         error: (error) => {
-          console.error('Login failed', error);
-          // Handle error
+          // Mostramos el error en pantalla en vez de solo en consola
+          this.errorMessage = 'Usuario o contraseña incorrectos.';
         }
       });
     }

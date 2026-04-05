@@ -3,12 +3,26 @@
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <div>
       <label for="username">Username:</label>
-      <input type="text" id="username" formControlName="username" required>
+      <input type="text" id="username" formControlName="username">
     </div>
     <div>
       <label for="password">Password:</label>
-      <input type="password" id="password" formControlName="password" required>
+      <input type="password" id="password" formControlName="password">
     </div>
-    <button type="submit" [disabled]="!loginForm.valid">Login</button>
+    <!-- Mensaje de validación en tiempo real -->
+    <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+      La contraseña debe tener al menos 8 caracteres.
+    </small>
+    <!-- Checkbox "Recordarme" -->
+    <div class="remember-me">
+      <input type="checkbox" id="rememberMe" (change)="rememberMe = !rememberMe">
+      <label for="rememberMe">Recordarme</label>
+    </div>
+    <!-- Mensaje de error del servidor-->
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <button type="submit" [disabled]="!loginForm.valid">Ingresar</button>
   </form>
 </div>
