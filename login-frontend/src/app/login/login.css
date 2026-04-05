@@ -1,15 +1,10 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
 :host {
   display: flex;
   min-height: 100vh;
+  width: 100%;
   align-items: center;
   justify-content: center;
-  position: relative;
+  padding: 1.5rem;
   background-color: #185fa5;
   background-image:
     radial-gradient(ellipse at top left, #042C53 0%, transparent 55%),
@@ -18,11 +13,11 @@
 }
 
 .login-container {
-  background: #e6e6e6;
+  background: #e2e2e2;
   border-radius: 16px;
-  padding: 40px 36px;
+  padding: 36px 28px;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   border-top: 4px solid #EF9F27;
 }
 
@@ -106,6 +101,8 @@ small {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 24px;
 }
 
@@ -194,23 +191,18 @@ button[type="submit"]:disabled {
   cursor: not-allowed;
 }
 
-.btn-shine {
-  position: relative;
-  overflow: hidden;
-}
+@media (max-width: 480px) {
+  .login-container {
+    padding: 28px 20px;
+    border-radius: 12px;
+  }
 
-.btn-shine::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -75%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
-  transform: skewX(-20deg);
-  transition: left 0.5s ease;
-}
+  .header h2 {
+    font-size: 20px;
+  }
 
-.btn-shine:hover::after {
-  left: 125%;
+  .remember-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
