@@ -48,4 +48,7 @@ export class Login {
       });
     }
   }
+  goToForgotPassword() {
+    this.router.navigate(['/forgot-password']);
+  }
 }

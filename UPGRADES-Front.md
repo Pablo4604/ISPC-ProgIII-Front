@@ -94,4 +94,57 @@ Se implementó diseño responsive para todos los tamaños de pantalla:
 - Se eliminó `overflow: hidden` del body para no cortar contenido
   en dispositivos pequeños
 
-  
+  ## Mejora 3 — Pantalla "Olvidé mi contraseña" con flujo OTP
+
+### Archivos creados
+`src/app/forgot-password/forgot-password.ts`
+`src/app/forgot-password/forgot-password.html`
+`src/app/forgot-password/forgot-password.css`
+
+### Archivos modificados
+`src/app/app.routes.ts` — nueva ruta `/forgot-password`
+`src/app/login/login.ts` — método `goToForgotPassword()`
+`src/app/login/login.html` — link "¿Olvidaste tu contraseña?" conectado
+
+### ¿Qué se agregó?
+Se creó un componente nuevo `ForgotPassword` siguiendo el mismo
+patrón que el componente `Login` — con su propio `.ts`, `.html`
+y `.css`. El componente maneja 3 pasos internos usando la nueva
+sintaxis de control de flujo de Angular 17+ (`@if` en lugar de
+`*ngIf`).
+
+### Flujo de 3 pasos
+
+**Paso 1 — Email**
+- Formulario con `emailForm` y validación `Validators.email`
+- Consume `POST /api/password-reset/request/`
+- Si el email existe, avanza al paso 2
+
+**Paso 2 — Código OTP**
+- Formulario con `otpForm` y validación `minLength(6) + maxLength(6)`
+- Consume `POST /api/password-reset/verify/`
+- Si el código es válido, avanza al paso 3
+
+**Paso 3 — Nueva contraseña**
+- Formulario con `passwordForm` y validación `minLength(8)`
+- Consume `POST /api/password-reset/confirm/`
+- Al confirmar muestra mensaje de éxito y redirige al login
+  automáticamente después de 2.5 segundos con `setTimeout()`
+
+### Indicador de pasos visual
+Se implementó un indicador de pasos con círculos numerados y
+líneas conectoras. Usa `[class.active]` y `[class.done]` para
+cambiar el color de cada paso según el progreso:
+- Gris → paso pendiente
+- Azul oscuro → paso actual
+- Dorado → paso completado
+
+### Sintaxis moderna de Angular
+Se usó `@if` en lugar de `*ngIf` (deprecado en Angular 17+)
+para el control de flujo en los templates. Esto aplica tanto
+al componente `ForgotPassword` como al `Login`.
+
+### Diseño consistente
+El componente usa la misma paleta de colores, fondo y estilos
+que el login — azul metalizado, dorado y responsive con
+`@media (max-width: 480px)`.

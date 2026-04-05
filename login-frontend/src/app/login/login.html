@@ -21,9 +21,9 @@
     <div class="form-group">
       <label for="password">Contraseña</label>
       <input type="password" id="password" formControlName="password" placeholder="Mínimo 8 caracteres">
-      <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-        La contraseña debe tener al menos 8 caracteres.
-      </small>
+      @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+        <small>La contraseña debe tener al menos 8 caracteres.</small>
+      }
     </div>
 
     <div class="remember-row">
@@ -31,12 +31,12 @@
         <input type="checkbox" id="rememberMe" (change)="rememberMe = !rememberMe">
         <label for="rememberMe">Recordarme</label>
       </div>
-      <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+      <a class="forgot-link" (click)="goToForgotPassword()">¿Olvidaste tu contraseña?</a>
     </div>
 
-    <div class="error-message" *ngIf="errorMessage">
-      {{ errorMessage }}
-    </div>
+    @if (errorMessage) {
+      <div class="error-message">{{ errorMessage }}</div>
+    }
 
     <button type="submit" [disabled]="!loginForm.valid">
   Ingresar
