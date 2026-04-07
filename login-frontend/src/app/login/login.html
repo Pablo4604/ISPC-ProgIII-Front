@@ -38,9 +38,13 @@
       <div class="error-message">{{ errorMessage }}</div>
     }
 
-    <button type="submit" [disabled]="!loginForm.valid">
-  Ingresar
-</button>
+    <button type="submit" [disabled]="!loginForm.valid || isLoading">
+      @if (isLoading) {
+        Ingresando...
+      } @else {
+        Ingresar
+      }
+    </button>
 
   </form>
 

@@ -148,3 +148,43 @@ al componente `ForgotPassword` como al `Login`.
 El componente usa la misma paleta de colores, fondo y estilos
 que el login — azul metalizado, dorado y responsive con
 `@media (max-width: 480px)`.
+
+## Mejora 4 — Loaders y feedback visual
+
+### Archivos modificados
+`src/app/login/login.ts`
+`src/app/login/login.html`
+`src/app/forgot-password/forgot-password.ts`
+`src/app/forgot-password/forgot-password.html`
+
+### ¿Qué se agregó?
+Se implementó feedback visual durante las peticiones HTTP
+mediante la propiedad `isLoading` en cada componente.
+
+### Patrón implementado
+Se agregó la propiedad `isLoading: boolean = false` en cada
+componente. Se activa antes de llamar al servidor y se
+desactiva cuando llega la respuesta (tanto en `next` como
+en `error`). En el template el botón muestra un texto
+alternativo y se deshabilita mientras espera:
+```typescript
+this.isLoading = true;
+this.http.post(...).subscribe({
+  next: () => { this.isLoading = false; },
+  error: () => { this.isLoading = false; }
+});
+```
+
+### Textos de loader por componente
+- Login: "Ingresando..."
+- Forgot Password paso 1: "Enviando..."
+- Forgot Password paso 2: "Verificando..."
+- Forgot Password paso 3: "Confirmando..."
+
+### ChangeDetectorRef
+Se inyectó `ChangeDetectorRef` en el componente Login para
+forzar la detección de cambios cuando llega un error desde
+el servidor. Esto es necesario porque Angular a veces no
+detecta cambios que ocurren fuera de su zona de ejecución.
+Se llama `this.cdr.detectChanges()` en el bloque `error`
+del subscribe.

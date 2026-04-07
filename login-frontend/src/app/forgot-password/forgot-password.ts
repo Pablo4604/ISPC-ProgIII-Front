@@ -26,6 +26,7 @@ export class ForgotPassword {
   // Mensaje de error y éxito para mostrar en pantalla
   errorMessage: string = '';
   successMessage: string = '';
+  isLoading: boolean = false;
 
   // Paso 1 — formulario de email
   emailForm: FormGroup = this.fb.group({
@@ -45,6 +46,7 @@ export class ForgotPassword {
   // PASO 1 — solicitar OTP
   onRequestOTP() {
     if (this.emailForm.valid) {
+      this.isLoading = true;
       this.errorMessage = '';
       this.emailValue = this.emailForm.value.email;
 
@@ -53,9 +55,11 @@ export class ForgotPassword {
       }).subscribe({
         next: () => {
           // Si el email existe, avanzamos al paso 2
+          this.isLoading = false;
           this.currentStep = 2;
         },
         error: (error) => {
+          this.isLoading = false;
           this.errorMessage = error.error?.email?.[0] || 'Ocurrió un error. Intentá de nuevo.';
         }
       });
@@ -65,6 +69,7 @@ export class ForgotPassword {
   // PASO 2 — verificar OTP
   onVerifyOTP() {
     if (this.otpForm.valid) {
+      this.isLoading = true;
       this.errorMessage = '';
 
       this.http.post<any>('http://localhost:8000/api/password-reset/verify/', {
@@ -73,9 +78,11 @@ export class ForgotPassword {
       }).subscribe({
         next: () => {
           // Si el código es válido, avanzamos al paso 3
+          this.isLoading = false;
           this.currentStep = 3;
         },
         error: (error) => {
+          this.isLoading = false;
           this.errorMessage = error.error?.non_field_errors?.[0] || 'Código inválido o expirado.';
         }
       });
@@ -85,6 +92,7 @@ export class ForgotPassword {
   // PASO 3 — confirmar nueva contraseña
   onConfirmPassword() {
     if (this.passwordForm.valid) {
+      this.isLoading = true;
       this.errorMessage = '';
 
       this.http.post<any>('http://localhost:8000/api/password-reset/confirm/', {
@@ -93,10 +101,12 @@ export class ForgotPassword {
         new_password: this.passwordForm.value.new_password
       }).subscribe({
         next: () => {
+          this.isLoading = false;
           this.successMessage = 'Contraseña actualizada. Redirigiendo al login...';
           setTimeout(() => this.router.navigate(['/']), 2500);
         },
         error: (error) => {
+          this.isLoading = false;
           this.errorMessage = error.error?.non_field_errors?.[0] || 'Ocurrió un error. Intentá de nuevo.';
         }
       });
