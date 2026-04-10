@@ -216,3 +216,40 @@ sessionStorage) y redirige al login con
 El componente Home usa la misma paleta de colores y fondo
 que el login y forgot-password, manteniendo coherencia visual
 en toda la aplicación.
+
+## Mejora 6 — AuthGuard
+
+### Archivos creados
+`src/app/auth-guard.ts`
+
+### Archivos modificados
+`src/app/app.routes.ts`
+
+### ¿Qué se agregó?
+Se implementó un Guard funcional usando `CanActivateFn`, la forma
+moderna de Angular para proteger rutas. El Guard verifica si existe
+un `access_token` en `localStorage` o `sessionStorage` antes de
+permitir el acceso a la ruta `/home`.
+
+### Lógica del Guard
+```typescript
+const token =
+  localStorage.getItem('access_token') ||
+  sessionStorage.getItem('access_token');
+
+if (token) return true;
+
+router.navigate(['/']);
+return false;
+```
+
+### ¿Cómo se registra en las rutas?
+Se agrega `canActivate: [authGuard]` en la ruta `/home` dentro
+de `app.routes.ts`. Angular ejecuta el Guard antes de renderizar
+el componente — si retorna `false`, cancela la navegación.
+
+### Casos protegidos
+- Acceso directo por URL a `/home` sin token → redirige al login
+- Botón "atrás" del navegador después del logout → redirige al login
+- Cualquier intento de navegación a `/home` sin autenticación → redirige al login
+
