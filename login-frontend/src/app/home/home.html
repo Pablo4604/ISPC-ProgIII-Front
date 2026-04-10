@@ -1,4 +1,37 @@
-<div class="welcome-container">
-  <h1>¡Bienvenido!</h1>
-  <p>Has iniciado sesión correctamente.</p>
+<div class="home-container">
+
+  <div class="card">
+    <div class="avatar">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="8" r="4" fill="#042C53"/>
+        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#042C53" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    @if (user) {
+      <h1>¡Bienvenido, {{ user.username }}!</h1>
+      <p class="subtitle">Has iniciado sesión correctamente.</p>
+
+      <div class="user-info">
+        <div class="info-row">
+          <span class="info-label">Usuario</span>
+          <span class="info-value">{{ user.username }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ user.email }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">ID</span>
+          <span class="info-value">#{{ user.id }}</span>
+        </div>
+      </div>
+    } @else {
+      <h1>¡Bienvenido!</h1>
+      <p class="subtitle">Has iniciado sesión correctamente.</p>
+    }
+
+    <button class="logout-btn" (click)="logout()">Cerrar sesión</button>
+  </div>
+
 </div>

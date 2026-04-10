@@ -188,3 +188,31 @@ el servidor. Esto es necesario porque Angular a veces no
 detecta cambios que ocurren fuera de su zona de ejecución.
 Se llama `this.cdr.detectChanges()` en el bloque `error`
 del subscribe.
+
+## Mejora 5 — Mostrar usuario en Home + Logout
+
+### Archivos modificados
+`src/app/home/home.ts`
+`src/app/home/home.html`
+`src/app/home/home.css`
+
+### ¿Qué se agregó?
+
+**Mostrar usuario en Home**
+Se implementó `ngOnInit()` en el componente `Home` para recuperar
+el objeto `user` del storage al cargar la pantalla. Se busca
+primero en `localStorage` (si usó "Recordarme") y luego en
+`sessionStorage`. Los datos se muestran en el template usando
+interpolación `{{ user.username }}`, `{{ user.email }}` y
+`{{ user.id }}`.
+
+**Logout**
+Se implementó el método `logout()` que elimina el `access_token`
+y el objeto `user` de ambos storages (localStorage y
+sessionStorage) y redirige al login con
+`this.router.navigate(['/'])`.
+
+**Diseño consistente**
+El componente Home usa la misma paleta de colores y fondo
+que el login y forgot-password, manteniendo coherencia visual
+en toda la aplicación.
