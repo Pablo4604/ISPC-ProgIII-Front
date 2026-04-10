@@ -253,3 +253,35 @@ el componente — si retorna `false`, cancela la navegación.
 - Botón "atrás" del navegador después del logout → redirige al login
 - Cualquier intento de navegación a `/home` sin autenticación → redirige al login
 
+## Mejora 7 — Consumir endpoint /api/profile/ desde Home
+
+### Archivos modificados
+`src/app/home/home.ts`
+
+### ¿Qué se agregó?
+Se modificó el componente Home para consumir el endpoint
+`GET /api/profile/` en lugar de leer los datos del storage.
+Esto garantiza que los datos mostrados siempre son frescos
+y válidos desde el servidor.
+
+### ¿Cómo se envía el token JWT?
+Se construye el header `Authorization` manualmente usando
+`HttpHeaders`:
+
+```typescript
+const headers = new HttpHeaders({
+  'Authorization': `Bearer ${token}`
+});
+this.http.get('/api/profile/', { headers }).subscribe(...)
+```
+
+### ChangeDetectorRef
+Se inyectó `ChangeDetectorRef` para forzar la detección de
+cambios cuando llegan los datos del servidor, siguiendo el
+mismo patrón aplicado en el componente Login.
+
+### Manejo de token expirado
+Si el endpoint responde con error (token expirado o inválido),
+el método `logout()` se ejecuta automáticamente limpiando el
+storage y redirigiendo al login.
+

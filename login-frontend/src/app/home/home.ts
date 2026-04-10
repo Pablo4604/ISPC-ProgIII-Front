@@ -1,6 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
@@ -10,19 +11,38 @@ import { CommonModule } from '@angular/common';
 })
 export class Home implements OnInit {
   private router = inject(Router);
+  private http = inject(HttpClient);
+  private cdr = inject(ChangeDetectorRef);
 
   // Objeto usuario recuperado del storage
   user: any = null;
 
   ngOnInit() {
-    // Buscamos el usuario en localStorage primero (Recordarme)
-    // y si no está, en sessionStorage
-    const stored =
-      localStorage.getItem('user') ||
-      sessionStorage.getItem('user');
+    // Obtenemos el token del storage
+    const token =
+      localStorage.getItem('access_token') ||
+      sessionStorage.getItem('access_token');
 
-    if (stored) {
-      this.user = JSON.parse(stored);
+    if (token) {
+      // Construimos el header Authorization con el token JWT
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+
+      // Consumimos el endpoint de perfil con el token
+      this.http.get<any>('http://localhost:8000/api/profile/', { headers })
+        .subscribe({
+          next: (response) => {
+            this.user = response;
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            // Si el token expiró o es inválido, redirigimos al login
+            this.logout();
+          }
+        });
+    } else {
+      this.router.navigate(['/']);
     }
   }
 
