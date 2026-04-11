@@ -285,3 +285,47 @@ Si el endpoint responde con error (token expirado o inválido),
 el método `logout()` se ejecuta automáticamente limpiando el
 storage y redirigiendo al login.
 
+## Mejora 8 — HttpInterceptor y Refresh Token
+
+### Archivos creados
+`src/app/auth-interceptor.ts`
+
+### Archivos modificados
+`src/app/app.config.ts`
+`src/app/login/login.ts`
+`src/app/home/home.ts`
+
+### ¿Qué se agregó?
+
+**Endpoint de refresh en el backend**
+Se registró el endpoint `POST /api/token/refresh/` de simplejwt
+en `backend/urls.py`. Recibe el `refresh_token` y devuelve un
+nuevo `access_token` sin que el usuario tenga que volver a
+loguearse.
+
+**HttpInterceptor en Angular**
+Se creó `authInterceptor` usando `HttpInterceptorFn`, la forma
+moderna de Angular para interceptar peticiones HTTP. Intercepta
+automáticamente los errores 401 y ejecuta este flujo:
+
+1. Detecta el error 401 (token expirado)
+2. Busca el `refresh_token` en el storage
+3. Llama a `POST /api/token/refresh/` con el refresh token
+4. Guarda el nuevo `access_token` en el storage
+5. Reintenta la request original con el nuevo token
+6. Si el refresh también falla → limpia el storage y redirige al login
+
+**Registro del interceptor**
+Se registró en `app.config.ts` usando `withInterceptors()`:
+```typescript
+provideHttpClient(withInterceptors([authInterceptor]))
+```
+
+**Guardar refresh token al hacer login**
+Se actualizó `login.ts` para guardar también el `refresh_token`
+en el storage junto con el `access_token` y el `user`.
+
+**Logout actualizado**
+Se actualizó `logout()` en `home.ts` para limpiar también el
+`refresh_token` del storage.
+

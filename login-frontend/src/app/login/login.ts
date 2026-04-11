@@ -40,9 +40,11 @@ export class Login {
           this.isLoading = false;
           if (this.rememberMe) {
             localStorage.setItem('access_token', response.access);
+            localStorage.setItem('refresh_token', response.refresh);
             localStorage.setItem('user', JSON.stringify(response.user));
           } else {
             sessionStorage.setItem('access_token', response.access);
+            sessionStorage.setItem('refresh_token', response.refresh);
             sessionStorage.setItem('user', JSON.stringify(response.user));
           }
           this.router.navigate(['/home']);

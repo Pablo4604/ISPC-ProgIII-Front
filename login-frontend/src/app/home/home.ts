@@ -49,8 +49,10 @@ export class Home implements OnInit {
   logout() {
     // Eliminamos el token y los datos del usuario del storage
     localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
     localStorage.removeItem('user');
     sessionStorage.removeItem('access_token');
+    sessionStorage.removeItem('refresh_token');
     sessionStorage.removeItem('user');
 
     // Redirigimos al login
